@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+.wrapper{
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.poppins{
+  font-family: "Poppins";
+}
+
+p{
+  font-family: "Poppins";
+  
+}
