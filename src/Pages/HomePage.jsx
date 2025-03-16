@@ -1,5 +1,6 @@
 import React from "react";
 import Hero from "../Components/Hero";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
   return (
@@ -23,7 +24,7 @@ export default function HomePage() {
             learning to help farmers make data-driven decisions about their
             crops.
           </p>
-          <button className="py-3 cursor-pointer px-5 bg-[#1F7D53] my-10 poppins text-white ">Detailed Overview</button>
+          <button className="py-3 cursor-pointer px-5 bg-[#1F7D53] my-10 poppins text-white "><Link to='/about'>Detailed Overview</Link></button>
         </div>
       </div>
     </div>
