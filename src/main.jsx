@@ -4,6 +4,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./Pages/HomePage.jsx";
 import AboutPage from "./Pages/AboutPage.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
+import SignUpPage from "./Pages/SignUpPage.jsx";
+import { FirebaseContextProvider } from "./context/FirebaseContext.jsx";
+import { LoginContextProvider } from "./context/LoginContext.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
+import UserDetail from "./Pages/UserDetail.jsx";
+
 
 // Creating the Routes
 
@@ -20,14 +26,36 @@ const router = createBrowserRouter([
         path: "/about",
         element: <AboutPage />,
       },
+      {
+        path: "/login",
+        element: (
+          <ProtectedRoute>
+            <LoginPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/signup",
+        element: (
+          <ProtectedRoute>
+            <SignUpPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/userdetail/:userUUID",
+        element: (
+          <UserDetail />
+        ),
+      }
     ],
-  },
-  {
-    path: "/login",
-    element : <LoginPage />
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
+  <LoginContextProvider>
+    <FirebaseContextProvider>
+      <RouterProvider router={router} />
+    </FirebaseContextProvider>
+  </LoginContextProvider>
 );

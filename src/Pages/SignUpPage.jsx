@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useFirebase } from "../context/FirebaseContext";
 
-export default function LoginPage() {
+export default function SignUpPage() {
   const firebase = useFirebase();
-
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
 
-  const handleGoogleSignIn = () => {
-    firebase?.handleSignUpWithGoogle();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const res = await firebase?.handleCreateUserWithEmailAndPassword(
+      email,
+      pass
+    );
+    console.log(res);
   };
 
-  const handleLoginWithEmailAndPass = async (e) => {
-    e.preventDefault();
-    const res = await firebase?.handleLoginUsingEmailAndPass(email, pass);
-    console.log(res);
+  const handleGoogleSignIn = () => {
+    firebase?.handleSignUpWithGoogle();
   };
 
   return (
@@ -25,13 +27,10 @@ export default function LoginPage() {
           Kheti Karo
         </h2>
         <p className='py-2 font-semibold text-right text-gray-700 poppins'>
-          Login into app
+          SignUp into app
         </p>
       </div>
-      <form
-        onSubmit={handleLoginWithEmailAndPass}
-        className='mt-4 flex flex-col gap-4'
-      >
+      <form className='mt-4 flex flex-col gap-4' onSubmit={handleSubmit}>
         <div className='flex flex-col gap-1'>
           <label htmlFor='email' className='poppins'>
             Email
@@ -41,8 +40,10 @@ export default function LoginPage() {
             id='email'
             className='p-2 outline-none rounded-sm border-[1px] border-gray-300'
             placeholder='Enter your email'
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className='flex flex-col gap-1'>
@@ -64,7 +65,7 @@ export default function LoginPage() {
           }`}
           disabled={!email || !pass}
         >
-          Log In
+          Sign Up
         </button>
       </form>
 
@@ -83,15 +84,15 @@ export default function LoginPage() {
           src='https://static.vecteezy.com/system/resources/thumbnails/046/861/647/small/google-logo-transparent-background-free-png.png'
           alt=''
         />
-        <span>Login With Google</span>
+        <span>Signup With Google</span>
       </button>
 
       <div className='mt-10 text-center'>
         <p className='text-blue-500 font-semibold'>
           <span className='text-gray-500 font-normal mr-2'>
-            Don't have an account?
+            Already have an account?
           </span>
-          <Link to={"/signup"}>Sign Up</Link>
+          <Link to={"/login"}>Login</Link>
         </p>
       </div>
     </div>
