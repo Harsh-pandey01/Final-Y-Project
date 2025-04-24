@@ -85,12 +85,18 @@ export const FirebaseContextProvider = ({ children }) => {
     return signOut(FirebaseAuth);
   };
 
-  const handleRecieveData = () => {
-    const dbRef = ref(database, "/DHT");
+   const handleRecieveData = () => {
+    
+    const dbRef = ref(database, "/user");
     get(dbRef)
       .then((snapshot) => {
         if (snapshot.exists()) {
           console.log("Data from Realtime Database:", snapshot.val());
+          const data = snapshot.val()
+          const dataPromise = new Promise((resolve , reject) => {
+            resolve(data)
+          })
+          return dataPromise
         } else {
           console.log("No data available");
         }
@@ -99,8 +105,6 @@ export const FirebaseContextProvider = ({ children }) => {
         console.error("Error fetching data:", error);
       });
   };
-
-  handleRecieveData();
 
   const [, seIsLogin] = useLogin();
 
@@ -121,6 +125,7 @@ export const FirebaseContextProvider = ({ children }) => {
         handleSignUpWithGoogle,
         handleLoginUsingEmailAndPass,
         handleLogOut,
+        handleRecieveData
       }}
     >
       {children}
