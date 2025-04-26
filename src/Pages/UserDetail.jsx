@@ -6,11 +6,11 @@ import axios from "axios";
 export default function UserDetail() {
   const [user] = useLogin();
   const navigate = useNavigate();
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate("/");
+  //   }
+  // }, []); 
 
   console.log(user);
 

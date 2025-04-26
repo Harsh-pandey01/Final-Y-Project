@@ -27,6 +27,11 @@ export default function HomePage() {
           <button className="py-3 cursor-pointer px-5 bg-[#1F7D53] my-10 poppins text-white "><Link to='/about'>Detailed Overview</Link></button>
         </div>
       </div>
+
+      {/* Instruction wrapper */}
+ 
+       <div className="" id="instruction"></div>
+
     </div>
   );
 }

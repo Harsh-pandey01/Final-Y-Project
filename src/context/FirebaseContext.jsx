@@ -37,6 +37,12 @@ export const FirebaseContextProvider = ({ children }) => {
   const handleCreateUserWithEmailAndPassword = (email, pass) => {
     return createUserWithEmailAndPassword(FirebaseAuth, email, pass);
   };
+  const auth = getAuth();
+
+auth.currentUser?.getIdToken(true).then((token) => {
+  console.log("Firebase Auth Token:", token);
+  // Send this token to Arduino
+})
 
   const handleSignUpWithGoogle = () => {
     return signInWithPopup(FirebaseAuth, GoogleProvider)
