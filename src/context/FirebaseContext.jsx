@@ -9,14 +9,17 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
-  signOut
+  signOut,
 } from "firebase/auth";
-import { useLogin } from "./LoginContext";
 
+import { getDatabase, ref, get } from "firebase/database";
+
+import { useLogin } from "./LoginContext";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDcNPn4N3JHnRLvpnaswb-izG5lsK0ckH8",
   authDomain: "final-project-ecd69.firebaseapp.com",
+  databaseURL: "https://final-project-ecd69-default-rtdb.firebaseio.com",
   projectId: "final-project-ecd69",
   storageBucket: "final-project-ecd69.firebasestorage.app",
   messagingSenderId: "614787839597",
@@ -31,6 +34,7 @@ export const useFirebase = () => useContext(FirebaseContext);
 
 const FirebaseAuth = getAuth(FirebaseApp);
 const GoogleProvider = new GoogleAuthProvider();
+const database = getDatabase(FirebaseApp);
 
 export const FirebaseContextProvider = ({ children }) => {
   // Sign A user
@@ -47,34 +51,75 @@ auth.currentUser?.getIdToken(true).then((token) => {
   const handleSignUpWithGoogle = () => {
     return signInWithPopup(FirebaseAuth, GoogleProvider)
       .then((result) => {
-        // const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
+        const credential = GoogleAuthProvider.credentialFromResult(result); // This retrieves the Google credentials
+        const googleToken = credential.accessToken; // Google access token
+        console.log('Google Access Token:', googleToken);
+
         const user = result.user;
-        console.log(user);
+        console.log('User Info:', user);
+
+        // Retrieve the Firebase ID token
+        user.getIdToken().then((idToken) => {
+          console.log('Firebase ID Token:', idToken);  // This is the Firebase ID token
+        }).catch((error) => {
+          console.error('Error getting Firebase ID token:', error);
+        });
       })
       .catch((error) => {
-        console.log(error);
+        console.error('Error during Google sign-in:', error);
       });
   };
 
   const handleLoginUsingEmailAndPass = (email, pass) => {
-    return signInWithEmailAndPassword(FirebaseAuth, email, pass);
+    return signInWithEmailAndPassword(FirebaseAuth, email, pass)
+      .then((userCredential) => {
+        const user = userCredential.user;
+
+        // Retrieve the Firebase ID token
+        user.getIdToken().then((idToken) => {
+          console.log('Firebase ID Token:', idToken);  // This is the Firebase ID token
+        }).catch((error) => {
+          console.error('Error getting Firebase ID token:', error);
+        });
+      })
+      .catch((error) => {
+        console.error('Error during email/password sign-in:', error);
+      });
   };
 
-  const handleLogOut = () =>{
-    return signOut(FirebaseAuth)
-  }
+  const handleLogOut = () => {
+    return signOut(FirebaseAuth);
+  };
+
+   const handleRecieveData = () => {
+    
+    const dbRef = ref(database, "/user");
+    get(dbRef)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log("Data from Realtime Database:", snapshot.val());
+          const data = snapshot.val()
+          const dataPromise = new Promise((resolve , reject) => {
+            resolve(data)
+          })
+          return dataPromise
+        } else {
+          console.log("No data available");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
 
   const [, seIsLogin] = useLogin();
-  
 
   useEffect(() => {
-    onAuthStateChanged(FirebaseAuth, (user) => {
+    onAuthStateChanged(FirebaseAuth, async (user) => {
       if (user) {
-        seIsLogin(user);
-
+        seIsLogin(user); // User is logged in
       } else {
-        seIsLogin(null);
+        seIsLogin(null); // User is logged out
       }
     });
   }, []);
@@ -85,7 +130,8 @@ auth.currentUser?.getIdToken(true).then((token) => {
         handleCreateUserWithEmailAndPassword,
         handleSignUpWithGoogle,
         handleLoginUsingEmailAndPass,
-        handleLogOut
+        handleLogOut,
+        handleRecieveData
       }}
     >
       {children}

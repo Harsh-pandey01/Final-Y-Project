@@ -9,7 +9,7 @@ import { FirebaseContextProvider } from "./context/FirebaseContext.jsx";
 import { LoginContextProvider } from "./context/LoginContext.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import UserDetail from "./Pages/UserDetail.jsx";
-
+import { HamburgurContextProvider } from "./context/HamburgurContext.jsx";
 
 // Creating the Routes
 
@@ -44,18 +44,18 @@ const router = createBrowserRouter([
       },
       {
         path: "/userdetail/:userUUID",
-        element: (
-          <UserDetail />
-        ),
-      }
+        element: <UserDetail />,
+      },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <LoginContextProvider>
-    <FirebaseContextProvider>
-      <RouterProvider router={router} />
-    </FirebaseContextProvider>
-  </LoginContextProvider>
+  <HamburgurContextProvider>
+    <LoginContextProvider>
+      <FirebaseContextProvider>
+        <RouterProvider router={router} />
+      </FirebaseContextProvider>
+    </LoginContextProvider>
+  </HamburgurContextProvider>
 );
