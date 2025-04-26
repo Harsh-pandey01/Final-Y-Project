@@ -1,23 +1,25 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useFirebase } from "../context/FirebaseContext";
+
+import { useLogin } from "../context/LoginContext";
 
 export default function SignUpPage() {
-  const firebase = useFirebase();
+  const [loginDetail, setLoginDetail] = useLogin();
+
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const res = await firebase?.handleCreateUserWithEmailAndPassword(
-      email,
-      pass
-    );
-    console.log(res);
-  };
+  const handleSubmit =  () => {
+    if (!loginDetail) {
+      const detail = {
+        userId: email,
+        pass: pass,
+        uuId: crypto?.randomUUID(),
+      };
 
-  const handleGoogleSignIn = () => {
-    firebase?.handleSignUpWithGoogle();
+      localStorage.setItem("loginDetail", JSON.stringify(detail));
+      setLoginDetail(detail);
+    }
   };
 
   return (
@@ -68,24 +70,6 @@ export default function SignUpPage() {
           Sign Up
         </button>
       </form>
-
-      <div className='my-5 flex items-center gap-2'>
-        <div className='flex-1 h-[2px] bg-gray-200'></div>
-        <p>OR</p>
-        <div className='flex-1 h-[2px] bg-gray-200'></div>
-      </div>
-
-      <button
-        onClick={handleGoogleSignIn}
-        className='w-full flex gap-2 item-center py-3 cursor-pointer justify-center  poppins border-[1px] border-gray-500 rounded-sm'
-      >
-        <img
-          className='h-6'
-          src='https://static.vecteezy.com/system/resources/thumbnails/046/861/647/small/google-logo-transparent-background-free-png.png'
-          alt=''
-        />
-        <span>Signup With Google</span>
-      </button>
 
       <div className='mt-10 text-center'>
         <p className='text-blue-500 font-semibold'>

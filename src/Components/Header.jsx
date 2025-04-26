@@ -126,7 +126,7 @@ export default function Header() {
                   } absolute flex flex-col gap-4 mt-4 cursor-pointer right-0 whitespace-nowrap bg-white text-black border-1 border-[#479773] p-2`}
                 >
                   <div className="hover:text-[#479773]">
-                    <Link to={`/userdetail/${isLogin?.uid}`}>Your Profile</Link>
+                    <Link to={`/userdetail/${isLogin?.uuId}`}>Your Profile</Link>
                   </div>
                   <button
                     className="p-2 w-full bg-red-500  transition-shadow duration-300 cursor-pointer text-white rounded-sm"

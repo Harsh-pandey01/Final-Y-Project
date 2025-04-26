@@ -2,132 +2,126 @@ import React, { useEffect, useState } from "react";
 import { useLogin } from "../context/LoginContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useFirebase } from "../context/FirebaseContext";
 
 export default function UserDetail() {
   const [user] = useLogin();
   const navigate = useNavigate();
-<<<<<<< HEAD
-=======
-  const firebaseFunctions = useFirebase();
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, []);
 
->>>>>>> 94a955accd1c675278a07f7247d097ccaa21962d
+  console.log(user)
+
+    const [inputs, setInputs] = useState({
+      N: "",
+      P: "",
+      K: "",
+      temperature: "",
+      humidity: "",
+      ph: "",
+      rainfall: "",
+    });
+
+    const [prediction, setPrediction] = useState("");
+
+    // Handle input changes
+    const handleChange = (e) => {
+      setInputs({ ...inputs, [e.target.name]: e.target.value });
+    };
+
+    // Function to send data to Flask backend
+    const getPrediction = async () => {
+      try {
+        const res = await axios.post(
+          "https://final-project-backend-v47z.onrender.com/predict",
+          inputs
+        );
+        setPrediction(res.data.crop);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+// >>>>>>> 94a955accd1c675278a07f7247d097ccaa21962d
   // useEffect(() => {
   //   if (!user) {
   //     navigate("/");
   //   }
-<<<<<<< HEAD
   // }, []); 
-=======
-  // }, []);
-
-  const [inputs, setInputs] = useState({
-    N: "",
-    P: "",
-    K: "",
-    temperature: "",
-    humidity: "",
-    ph: "",
-    rainfall: "",
-  });
-
-  const [coordinates, setCoordinates] = useState({});
-
-  const hardwareData = firebaseFunctions?.handleRecieveData();
-  console.log(hardwareData);
-
-  const [prediction, setPrediction] = useState("");
-
-  // Handle input changes
-  const handleChange = (e) => {
-    setInputs({ ...inputs, [e.target.name]: e.target.value });
-  };
-
-  // Function to send data to Flask backend
-  const getPrediction = async () => {
-    try {
-      const res = await axios.post(
-        "https://final-project-backend-v47z.onrender.com/predict",
-        inputs
-      );
-      setPrediction(res.data.crop);
-    } catch (error) {
-      console.error(error);
-    }
-  };
->>>>>>> 94a955accd1c675278a07f7247d097ccaa21962d
 
   // function to get the access of the location
-  const handleEnableLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          // This is where you get the location
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
+  // const handleEnableLocation = () => {
+  //   if ("geolocation" in navigator) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       function (position) {
+  //         // This is where you get the location
+  //         const latitude = position.coords.latitude;
+  //         const longitude = position.coords.longitude;
 
-          console.log(latitude, longitude);
+  //         console.log(latitude, longitude);
 
-          setCoordinates({
-            latitude,
-            longitude,
-          });
-        },
-        function (error) {
-          console.log("Error Code: " + error.code + " - " + error.message);
-        }
-      );
-    } else {
-      console.log("Geolocation is not supported by this browser.");
-    }
-  };
+  //         setCoordinates({
+  //           latitude,
+  //           longitude,
+  //         });
+  //       },
+  //       function (error) {
+  //         console.log("Error Code: " + error.code + " - " + error.message);
+  //       }
+  //     );
+  //   } else {
+  //     console.log("Geolocation is not supported by this browser.");
+  //   }
+  // };
 
   // handleEnableLocation()
-  if (!coordinates?.longitude) {
-    handleEnableLocation();
-  }
+  // if (!coordinates?.longitude) {
+  //   handleEnableLocation();
+  // }
 
-  useEffect(() => {
-    if (coordinates.latitude && coordinates.longitude) {
-      console.log("entered");
-      fetchSoilData();
-    }
-  }, [coordinates]);
+  // useEffect(() => {
+  //   if (coordinates.latitude && coordinates.longitude) {
+  //     console.log("entered");
+  //     fetchSoilData();
+  //   }
+  // }, [coordinates]);
 
-  const fetchSoilData = async () => {
-    const baseUrl = "https://rest.isric.org/soilgrids/v2.0/properties/query";
-    const latitude = 52.379189;  // Netherlands latitude
-    const longitude = 4.900931;  // Netherlands longitude
-    const properties = ["phh2o", "ocd", "cec"];
-    const depth = "0-5cm";  // Depth range for the data
+  // const fetchSoilData = async () => {
+  //   const baseUrl = "https://rest.isric.org/soilgrids/v2.0/properties/query";
+  //   const latitude = 52.379189;  // Netherlands latitude
+  //   const longitude = 4.900931;  // Netherlands longitude
+  //   const properties = ["phh2o", "ocd", "cec"];
+  //   const depth = "0-5cm";  // Depth range for the data
   
-    const datas = {};
+  //   const datas = {};
   
-    for (let prop of properties) {
-      const url = `${baseUrl}?lon=${longitude}&lat=${latitude}&property=${prop}&depth=${depth}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        datas[prop] = data;
-      } catch (error) {
-        console.error("Error fetching soil data:", error);
-      }
-    }
+  //   for (let prop of properties) {
+  //     const url = `${baseUrl}?lon=${longitude}&lat=${latitude}&property=${prop}&depth=${depth}`;
+  //     try {
+  //       const response = await fetch(url);
+  //       const data = await response.json();
+  //       datas[prop] = data;
+  //     } catch (error) {
+  //       console.error("Error fetching soil data:", error);
+  //     }
+  //   }
   
-    console.log(datas);
+  //   console.log(datas);
   
-    const ph = datas?.phh2o?.properties?.layers?.[0]?.depths?.[0]?.values?.mean;
-    const ocd = datas?.ocd?.properties?.layers?.[0]?.depths?.[0]?.values?.mean;
-    const cec = datas?.cec?.properties?.layers?.[0]?.depths?.[0]?.values?.mean;
+  //   const ph = datas?.phh2o?.properties?.layers?.[0]?.depths?.[0]?.values?.mean;
+  //   const ocd = datas?.ocd?.properties?.layers?.[0]?.depths?.[0]?.values?.mean;
+  //   const cec = datas?.cec?.properties?.layers?.[0]?.depths?.[0]?.values?.mean;
   
-    console.log(ph, ocd, cec);
+  //   console.log(ph, ocd, cec);
   
-    const estimatedN = ocd ? (ocd / 10).toFixed(2) : "";
-    const estimatedP = ph ? (ph * 1.5).toFixed(2) : "";
-    const estimatedK = cec ? (cec * 0.2).toFixed(2) : "";
+  //   const estimatedN = ocd ? (ocd / 10).toFixed(2) : "";
+  //   const estimatedP = ph ? (ph * 1.5).toFixed(2) : "";
+  //   const estimatedK = cec ? (cec * 0.2).toFixed(2) : "";
   
-    console.log(estimatedN, estimatedP, estimatedK);
-  };
+  //   console.log(estimatedN, estimatedP, estimatedK);
+  // };
   
 
   return (
@@ -136,7 +130,7 @@ export default function UserDetail() {
         <div className="">
           <div>
             <h2>User Details</h2>
-            <p> Username : Harsh Pandey</p>
+            <p> Username : {user?.userId}</p>
           </div>
         </div>
         <div>
